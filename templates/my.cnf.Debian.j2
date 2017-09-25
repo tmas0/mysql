@@ -1,9 +1,10 @@
+# {{ ansible_managed }}
 #
 # The MySQL database server configuration file.
 #
 [client]
 port		= {{ mysql_port }}
-socket		= /var/run/mysqld/mysqld.sock
+socket		= {{ mysql_socket }}
 
 # This was formally known as [safe_mysqld]. Both versions are currently parsed.
 [mysqld_safe]
@@ -13,20 +14,23 @@ nice		= 0
 [mysqld]
 user		= mysql
 pid-file	= /var/run/mysqld/mysqld.pid
-socket		= /var/run/mysqld/mysqld.sock
+socket		= {{ mysql_socket }}
 port		= {{ mysql_port }}
-basedir		= /usr
-datadir		= /var/lib/mysql
+basedir		= {{ mysql_basedir }}
+datadir		= {{ mysql_datadir }}
 tmpdir		= /tmp
 lc-messages-dir	= /usr/share/mysql
 skip-external-locking
+disconnect_on_expired_password = OFF
 
 bind-address		= {{ mysql_bind_address }}
 
-#key_buffer		= 16M
+key_buffer		= 16M
 max_allowed_packet	= 16M
 thread_stack		= 192K
 thread_cache_size       = 8
+
+myisam-recover         = BACKUP
 
 query_cache_limit	= 1M
 query_cache_size        = 16M
@@ -52,5 +56,10 @@ binlog_ignore_db        = {{ i.name }}
 {% endfor %}
 {% endif %}
 {% endif %}
+
+# separar las bbdd en tablespaces diferentes
+innodb_file_per_table = 1
+# asignar 80% de la RAM al buffer de bbdd de innodb
+innodb_buffer_pool_size = 24G
 
 !includedir /etc/mysql/conf.d/

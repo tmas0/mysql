@@ -2,7 +2,7 @@
 
 mysql_pkgs:
   - python-selinux
-  - mysql-server
+  - "mysql-server-{{mysql_version}}"
   - python-mysqldb
 
 mysql_service: mysql

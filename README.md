@@ -20,9 +20,14 @@ Role Variables
 The variables that can be passed to this role and a brief description about
 them are as follows:
 
-      mysql_port: 3306                 # The port for mysql server to listen
-      mysql_bind_address: "0.0.0.0"    # The bind address for mysql server
-      mysql_root_db_pass: foobar       # The root DB password
+      mysql_port: 3306                                            # The port for mysql server to listen.
+      mysql_bind_address: "0.0.0.0"                               # The bind address for mysql server.
+      mysql_root_db_pass: foobar                                  # The root DB password.
+      mysql_datapath: "/var/lib"                                  # The data path (we recommend add a dedicated disk/volume).
+      mysql_datadir: "{{ mysql_datapath }}/mysql"                 # The data directory.
+      mysql_basedir: "/usr"                                       # The base directory of binaries.
+      mysql_securefilepriv: "{{ mysql_datapath }}/mysql-files"    # The secure file privileges. (For load data query)
+      mysql_socket: "/var/run/mysqld/mysqld.sock"                 # The socket file.
 
       # A list that has all the databases to be
       # created and their replication status:

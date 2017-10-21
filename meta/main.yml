@@ -1,7 +1,7 @@
 ---
 galaxy_info:
-  author: "Benno Joy"
-  company: AnsibleWorks
+  author: "Toni Mas"
+  company: Bluekiri
   license: license (BSD)
   min_ansible_version: 1.4 
   platforms:
@@ -16,6 +16,8 @@ galaxy_info:
       - 18
    - name: Ubuntu
      versions:
+      - xenial
+      - trusty
       - precise
       - quantal
       - raring
@@ -24,3 +26,4 @@ galaxy_info:
    - database:sql
 dependencies: []
   
+...

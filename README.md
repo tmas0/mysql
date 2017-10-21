@@ -125,6 +125,5 @@ Author Information
 ------------------
 
 Benno Joy
-Modified by: Toni Mas <toni.mas@bluekiri.com>
- 
 
+Modified by: Toni Mas <toni.mas@bluekiri.com>

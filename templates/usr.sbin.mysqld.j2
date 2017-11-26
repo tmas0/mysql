@@ -1,5 +1,7 @@
 # {{ ansible_managed }}
 # Site-specific additions and overrides for usr.sbin.mysqld.
 # For more details, please see /etc/apparmor.d/local/README.
-{{ mysql_datapath }} r,
-{{ mysql_datapath }}/** rwk,
+
+  /proc/*/status r,
+  /sys/devices/system/node/ r,
+  /sys/devices/system/node/node0/meminfo r,

@@ -225,7 +225,49 @@
     login_password: "{{ mysql_root_db_pass }}"
   delegate_to: "{{ mysql_repl_master }}"
   register: repl_stat
-  when: slave.Is_Slave is defined and slave.Is_Slave == False and mysql_repl_role == 'slave' and mysql_repl_master is defined
+  when: slave.Is_Slave is defined and slave.Is_Slave == False and mysql_repl_role == 'slave' and mysql_repl_master is defined and mysql_resync|default(False) == False
+
+- name: Passhack
+  template:
+    src: mylocal.cnf.j2
+    dest: "~/.my.cnf"
+    owner: root
+    group: root
+    mode: 0600
+  when: mysql_repl_role == 'slave' and mysql_resync|default(False) == True
+
+# No se puede utilizar el mysql_db module porque no soporta la especificacion de replicacion.
+- name: Backup and restore database backup for start/restart the replication
+  shell: "mysqldump --apply-slave-statements --master-data=1 -h {{ mysql_repl_master }} -u root --databases {{ item.name }} -r /opt/{{ item.name }}.sql"
+  with_items:
+    - "{{ mysql_db }}"
+  when: mysql_repl_role == 'slave' and mysql_resync|default(False) == True
+
+- name: Passhack
+  file:
+    path: "~/.my.cnf"
+    state: absent
+  become: yes
+  when: mysql_repl_role == 'slave' and mysql_resync|default(False) == True
+
+- name: Restore backup file
+  mysql_db:
+    name: "{{ item.name }}"
+    state: import
+    target: "/opt/{{ item.name }}.sql"
+    login_user: root
+    login_password: "{{ mysql_root_db_pass }}"
+  with_items:
+    - "{{ mysql_db }}"
+  when: mysql_repl_role == 'slave' and mysql_resync|default(False) == True
+
+- name: Drop backup file
+  file:
+    state: absent
+    path: "/opt/{{ item.name }}.sql"
+  with_items:
+    - "{{ mysql_db }}"
+  when: mysql_repl_role == 'slave' and mysql_resync|default(False) == True
 
 - name: Change the master in slave to start the replication
   mysql_replication:
